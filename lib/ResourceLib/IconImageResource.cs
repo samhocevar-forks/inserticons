@@ -11,22 +11,22 @@ namespace Vestris.ResourceLib
     /// <summary>
     /// This structure depicts the organization of data in an icon resource.
     /// </summary>
-    internal class IconImageResource : Resource
+    public class IconImageResource : Resource
     {
         /// <summary>
         /// Directory header.
         /// </summary>
-        internal Kernel32.GRPICONDIRENTRY _header;
+        protected Kernel32.GRPICONDIRENTRY _header;
 
         /// <summary>
         /// Actual image.
         /// </summary>
-        protected  DeviceIndependentBitmap _image = new DeviceIndependentBitmap();
+        protected DeviceIndependentBitmap _image = new DeviceIndependentBitmap();
 
         /// <summary>
         /// Hardware-independent icon directory header.
         /// </summary>
-        internal Kernel32.GRPICONDIRENTRY Header
+        public Kernel32.GRPICONDIRENTRY Header
         {
             get
             {
@@ -41,7 +41,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Embedded icon Id.
         /// </summary>
-        internal ushort Id
+        public ushort Id
         {
             get
             {
@@ -56,7 +56,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// An icon image.
         /// </summary>
-        internal DeviceIndependentBitmap Image
+        public DeviceIndependentBitmap Image
         {
             get
             {
@@ -86,7 +86,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// A new icon resource.
         /// </summary>
-        internal IconImageResource(ResourceId type)
+        public IconImageResource(ResourceId type)
             : base(IntPtr.Zero,
                 IntPtr.Zero,
                 type,
@@ -104,7 +104,7 @@ namespace Vestris.ResourceLib
         /// <param name="type">Resource type.</param>
         /// <param name="name">Resource id.</param>
         /// <param name="language">Resource language.</param>
-        internal IconImageResource(IconFileIcon icon, ResourceId type, ResourceId name, UInt16 language)
+        public IconImageResource(IconFileIcon icon, ResourceId type, ResourceId name, UInt16 language)
         {
             _name = name;
             _type = type;
@@ -123,7 +123,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Icon width in pixels.
         /// </summary>
-        internal Byte Width
+        public Byte Width
         {
             get
             {
@@ -138,7 +138,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Icon height in pixels.
         /// </summary>
-        internal Byte Height
+        public Byte Height
         {
             get
             {
@@ -153,7 +153,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Image size in bytes.
         /// </summary>
-        internal UInt32 ImageSize
+        public UInt32 ImageSize
         {
             get
             {
@@ -192,7 +192,7 @@ namespace Vestris.ResourceLib
 
             ReadImage(dibBits, (UInt32) Kernel32.SizeofResource(hModule, hIconInfo));
 
-            return new IntPtr(lpRes.ToInt32() + Marshal.SizeOf(_header));
+            return new IntPtr(lpRes.ToInt64() + Marshal.SizeOf(_header));
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Icon pixel format.
         /// </summary>
-        internal PixelFormat PixelFormat
+        public PixelFormat PixelFormat
         {
             get
             {
@@ -222,9 +222,9 @@ namespace Vestris.ResourceLib
                         return PixelFormat.Format8bppIndexed;
                     case 16:
                         return PixelFormat.Format16bppRgb565;
-                    case 24:
+                    case 24: // not actually supported in icons
                         return PixelFormat.Format24bppRgb;
-                    case 32:
+                    case 32: // 0RGB 32bpp bitmap or ARGB (alpha-blended)
                         return PixelFormat.Format32bppArgb;
                     default:
                         return PixelFormat.Undefined;
@@ -235,7 +235,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Icon pixel format English standard string.
         /// </summary>
-        internal string PixelFormatString
+        public string PixelFormatString
         {
             get
             {
@@ -288,7 +288,7 @@ namespace Vestris.ResourceLib
         /// Save icon to a file.
         /// </summary>
         /// <param name="filename">Target executable file.</param>
-        internal virtual void SaveIconTo(string filename)
+        public virtual void SaveIconTo(string filename)
         {
             SaveTo(filename,
                 _type,

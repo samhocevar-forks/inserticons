@@ -7,12 +7,12 @@ namespace Vestris.ResourceLib
     /// <summary>
     /// Gdi32.dll interop functions.
     /// </summary>
-    internal abstract class Gdi32
+    public abstract class Gdi32
     {
         /// <summary>
         /// Bitmap compression options.
         /// </summary>
-        internal enum BitmapCompression
+        public enum BitmapCompression
         {
             /// <summary>
             /// An uncompressed format. 
@@ -45,57 +45,57 @@ namespace Vestris.ResourceLib
         /// See http://msdn.microsoft.com/en-us/library/ms532290.aspx for more information.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        internal struct BITMAPINFOHEADER
+        public struct BITMAPINFOHEADER
         {
             /// <summary>
             /// Bitmap information size.
             /// </summary>
-            internal UInt32 biSize;
+            public UInt32 biSize;
             /// <summary>
             /// Bitmap width.
             /// </summary>
-            internal Int32 biWidth;
+            public Int32 biWidth;
             /// <summary>
             /// Bitmap height.
             /// </summary>
-            internal Int32 biHeight;
+            public Int32 biHeight;
             /// <summary>
             /// Number of logical planes.
             /// </summary>
-            internal UInt16 biPlanes;
+            public UInt16 biPlanes;
             /// <summary>
             /// Bitmap bitrate.
             /// </summary>
-            internal UInt16 biBitCount;
+            public UInt16 biBitCount;
             /// <summary>
             /// Bitmap compression.
             /// </summary>
-            internal UInt32 biCompression;
+            public UInt32 biCompression;
             /// <summary>
             /// Image size.
             /// </summary>
-            internal UInt32 biSizeImage;
+            public UInt32 biSizeImage;
             /// <summary>
             /// Horizontal pixel resolution.
             /// </summary>
-            internal Int32 biXPelsPerMeter;
+            public Int32 biXPelsPerMeter;
             /// <summary>
             /// Vertical pixel resolution.
             /// </summary>
-            internal Int32 biYPelsPerMeter;
+            public Int32 biYPelsPerMeter;
             /// <summary>
             /// 
             /// </summary>
-            internal UInt32 biClrUsed;
+            public UInt32 biClrUsed;
             /// <summary>
             /// 
             /// </summary>
-            internal UInt32 biClrImportant;
+            public UInt32 biClrImportant;
 
             /// <summary>
             /// Returns the current bitmap compression.
             /// </summary>
-            internal BitmapCompression BitmapCompression
+            public BitmapCompression BitmapCompression
             {
                 get
                 {
@@ -106,7 +106,7 @@ namespace Vestris.ResourceLib
             /// <summary>
             /// Bitmap pixel format.
             /// </summary>
-            internal PixelFormat PixelFormat
+            public PixelFormat PixelFormat
             {
                 get
                 {
@@ -133,7 +133,7 @@ namespace Vestris.ResourceLib
             /// <summary>
             /// Bitmap pixel format English standard string.
             /// </summary>
-            internal string PixelFormatString
+            public string PixelFormatString
             {
                 get
                 {
@@ -161,16 +161,16 @@ namespace Vestris.ResourceLib
         /// http://msdn.microsoft.com/en-us/library/dd183375(VS.85).aspx.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        internal struct BITMAPINFO
+        public struct BITMAPINFO
         {
             /// <summary>
             /// Specifies a bitmap information header structure that contains information about the dimensions of color format.
             /// </summary>
-            internal BITMAPINFOHEADER bmiHeader;
+            public BITMAPINFOHEADER bmiHeader;
             /// <summary>
             /// An array of RGBQUAD. The elements of the array make up the color table.
             /// </summary>
-            internal RGBQUAD bmiColors;
+            public RGBQUAD bmiColors;
         }
 
         /// <summary>
@@ -178,24 +178,24 @@ namespace Vestris.ResourceLib
         /// http://msdn.microsoft.com/en-us/library/ms997538.aspx
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct RGBQUAD
+        public struct RGBQUAD
         {
             /// <summary>
             /// Blue.
             /// </summary>
-            internal Byte rgbBlue;
+            public Byte rgbBlue;
             /// <summary>
             /// Green.
             /// </summary>
-            internal Byte rgbGreen;
+            public Byte rgbGreen;
             /// <summary>
             /// Red.
             /// </summary>
-            internal Byte rgbRed;
+            public Byte rgbRed;
             /// <summary>
             /// Reserved.
             /// </summary>
-            internal Byte rgbReserved;
+            public Byte rgbReserved;
         }
 
         /// <summary>
@@ -203,28 +203,28 @@ namespace Vestris.ResourceLib
         /// http://msdn.microsoft.com/en-us/library/dd183374(VS.85).aspx
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        internal struct BITMAPFILEHEADER
+        public struct BITMAPFILEHEADER
         {
             /// <summary>
             /// The file type; must be BM.
             /// </summary>
-            internal UInt16 bfType;
+            public UInt16 bfType;
             /// <summary>
             /// The size, in bytes, of the bitmap file.
             /// </summary>
-            internal UInt32 bfSize;
+            public UInt32 bfSize;
             /// <summary>
             /// Reserved; must be zero.
             /// </summary>
-            internal UInt16 bfReserved1;
+            public UInt16 bfReserved1;
             /// <summary>
             /// Reserved; must be zero.
             /// </summary>
-            internal UInt16 bfReserved2;
+            public UInt16 bfReserved2;
             /// <summary>
             /// The offset, in bytes, from the beginning of the BITMAPFILEHEADER structure to the bitmap bits.
             /// </summary>
-            internal UInt32 bfOffBits;
+            public UInt32 bfOffBits;
         }
 
         /// <summary>

@@ -6,8 +6,54 @@ namespace Vestris.ResourceLib
     /// <summary>
     /// Kernel32.dll interop functions.
     /// </summary>
-    internal abstract class Kernel32
+    public abstract class Kernel32
     {
+        /// <summary>
+        /// A resource header.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct RESOURCE_HEADER
+        {
+            /// <summary>
+            /// Header length.
+            /// </summary>
+            public UInt16 wLength;
+            /// <summary>
+            /// Data length.
+            /// </summary>
+            public UInt16 wValueLength;
+            /// <summary>
+            /// Resource type.
+            /// </summary>
+            public UInt16 wType;
+
+            /// <summary>
+            /// A new resource header of a given length.
+            /// </summary>
+            /// <param name="valueLength"></param>
+            public RESOURCE_HEADER(UInt16 valueLength)
+            {
+                wLength = 0;
+                wValueLength = valueLength;
+                wType = 0;
+            }
+        }
+
+        /// <summary>
+        /// Resource header type.
+        /// </summary>
+        public enum RESOURCE_HEADER_TYPE
+        {
+            /// <summary>
+            /// Binary data.
+            /// </summary>
+            BinaryData = 0,
+            /// <summary>
+            /// String data.
+            /// </summary>
+            StringData = 1
+        }
+
         /// <summary>
         /// Language and code page combinations.
         /// The low-order word of each DWORD must contain a Microsoft language identifier, 
@@ -16,16 +62,94 @@ namespace Vestris.ResourceLib
         /// or code page independent.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct VAR_HEADER
+        public struct VAR_HEADER
         {
             /// <summary>
             /// Microsoft language identifier.
             /// </summary>
-            internal UInt16 wLanguageIDMS;
+            public UInt16 wLanguageIDMS;
             /// <summary>
             /// IBM code page number.
             /// </summary>
-            internal UInt16 wCodePageIBM;
+            public UInt16 wCodePageIBM;
+        }
+
+        /// <summary>
+        /// This structure contains version information about a file. 
+        /// This information is language- and code page�independent.
+        /// http://msdn.microsoft.com/en-us/library/ms647001.aspx
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
+        public struct VS_FIXEDFILEINFO
+        {
+            /// <summary>
+            /// Contains the value 0xFEEF04BD. This is used with the szKey member of the VS_VERSIONINFO structure when searching a file for the VS_FIXEDFILEINFO structure. 
+            /// </summary>
+            public UInt32 dwSignature;
+            /// <summary>
+            /// Specifies the binary version number of this structure. The high-order word of this member contains the major version number, and the low-order word contains the minor version number.
+            /// </summary>
+            public UInt32 dwStrucVersion;
+            /// <summary>
+            /// Specifies the most significant 32 bits of the file's binary version number. This member is used with dwFileVersionLS to form a 64-bit value used for numeric comparisons.
+            /// </summary>
+            public UInt32 dwFileVersionMS;
+            /// <summary>
+            /// Specifies the least significant 32 bits of the file's binary version number. This member is used with dwFileVersionMS to form a 64-bit value used for numeric comparisons.
+            /// </summary>
+            public UInt32 dwFileVersionLS;
+            /// <summary>
+            /// Specifies the most significant 32 bits of the binary version number of the product with which this file was distributed. This member is used with dwProductVersionLS to form a 64-bit value used for numeric comparisons.
+            /// </summary>
+            public UInt32 dwProductVersionMS;
+            /// <summary>
+            /// Specifies the least significant 32 bits of the binary version number of the product with which this file was distributed. This member is used with dwProductVersionMS to form a 64-bit value used for numeric comparisons.
+            /// </summary>
+            public UInt32 dwProductVersionLS;
+            /// <summary>
+            /// Contains a bitmask that specifies the valid bits in dwFileFlags. A bit is valid only if it was defined when the file was created. 
+            /// </summary>
+            public UInt32 dwFileFlagsMask;
+            /// <summary>
+            /// Contains a bitmask that specifies the Boolean attributes of the file.
+            /// </summary>
+            public UInt32 dwFileFlags;
+            /// <summary>
+            /// Specifies the operating system for which this file was designed.
+            /// </summary>
+            public UInt32 dwFileOS;
+            /// <summary>
+            /// Specifies the general type of file. 
+            /// </summary>
+            public UInt32 dwFileType;
+            /// <summary>
+            /// Specifies the function of the file.
+            /// </summary>
+            public UInt32 dwFileSubtype;
+            /// <summary>
+            /// Specifies the most significant 32 bits of the file's 64-bit binary creation date and time stamp.
+            /// </summary>
+            public UInt32 dwFileDateMS;
+            /// <summary>
+            /// Specifies the least significant 32 bits of the file's 64-bit binary creation date and time stamp.
+            /// </summary>
+            public UInt32 dwFileDateLS;
+
+            /// <summary>
+            /// Creates a default Windows VS_FIXEDFILEINFO structure.
+            /// </summary>
+            /// <returns>A default Windows VS_FIXEDFILEINFO.</returns>
+            public static VS_FIXEDFILEINFO GetWindowsDefault()
+            {
+                VS_FIXEDFILEINFO fixedFileInfo = new VS_FIXEDFILEINFO();
+                fixedFileInfo.dwSignature = Winver.VS_FFI_SIGNATURE;
+                fixedFileInfo.dwStrucVersion = Winver.VS_FFI_STRUCVERSION;
+                fixedFileInfo.dwFileFlagsMask = Winver.VS_FFI_FILEFLAGSMASK;
+                fixedFileInfo.dwFileOS = (uint) Winver.FileOs.VOS__WINDOWS32;
+                fixedFileInfo.dwFileSubtype = (uint) Winver.FileSubType.VFT2_UNKNOWN;
+                fixedFileInfo.dwFileType = (uint) Winver.FileType.VFT_DLL;
+                return fixedFileInfo;
+            }
         }
 
         /// <summary>
@@ -33,20 +157,20 @@ namespace Vestris.ResourceLib
         /// http://msdn.microsoft.com/en-us/library/ms997538.aspx
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        internal struct GRPICONDIR
+        public struct GRPICONDIR
         {
             /// <summary>
             /// Reserved, must be zero.
             /// </summary>
-            internal UInt16 wReserved;
+            public UInt16 wReserved;
             /// <summary>
             /// Resource type, 1 for icons.
             /// </summary>
-            internal UInt16 wType;
+            public UInt16 wType;
             /// <summary>
             /// Number of images.
             /// </summary>
-            internal UInt16 wImageCount;
+            public UInt16 wImageCount;
         }
 
         /// <summary>
@@ -54,102 +178,106 @@ namespace Vestris.ResourceLib
         /// See http://msdn.microsoft.com/en-us/library/ms997538.aspx for more information.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        internal struct GRPICONDIRENTRY
+        public struct GRPICONDIRENTRY
         {
             /// <summary>
-            /// Width.
+            /// Width of the image. Starting with Windows 95 a value of 0 represents width of 256.
             /// </summary>
-            internal Byte bWidth;
+            public Byte bWidth;
             /// <summary>
-            /// Height.
+            /// Height of the image. Starting with Windows 95 a value of 0 represents height of 256.
             /// </summary>
-            internal Byte bHeight;
+            public Byte bHeight;
             /// <summary>
-            /// Colors; 0 means 256 or more.
+            /// Number of colors in the image. 
+            /// bColors = 1 &lt;&lt; (wBitsPerPixel * wPlanes)
+            /// If wBitsPerPixel* wPlanes is greater orequal to 8, then bColors = 0.
             /// </summary>
-            internal Byte bColors;
+            public Byte bColors;
             /// <summary>
             /// Reserved.
             /// </summary>
-            internal Byte bReserved;
+            public Byte bReserved;
             /// <summary>
             /// Number of bitmap planes.
+            /// 1: monochrome bitmap
             /// </summary>
-            internal UInt16 wPlanes;
+            public UInt16 wPlanes;
             /// <summary>
             /// Bits per pixel.
+            /// 1: monochrome bitmap
             /// </summary>
-            internal UInt16 wBitsPerPixel;
+            public UInt16 wBitsPerPixel;
             /// <summary>
             /// Image size in bytes.
             /// </summary>
-            internal UInt32 dwImageSize;
+            public UInt32 dwImageSize;
             /// <summary>
             /// Icon ID.
             /// </summary>
-            internal UInt16 nID;
+            public UInt16 nID;
         }
 
         /// <summary>
         /// Hardware-independent icon directory entry in an .ico file.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        internal struct FILEGRPICONDIRENTRY
+        public struct FILEGRPICONDIRENTRY
         {
             /// <summary>
             /// Icon width.
             /// </summary>
-            internal Byte bWidth;
+            public Byte bWidth;
             /// <summary>
             /// Icon height.
             /// </summary>
-            internal Byte bHeight;
+            public Byte bHeight;
             /// <summary>
             /// Colors; 0 means 256 or more.
             /// </summary>
-            internal Byte bColors;
+            public Byte bColors;
             /// <summary>
             /// Reserved.
             /// </summary>
-            internal Byte bReserved;
+            public Byte bReserved;
             /// <summary>
             /// Number of bitmap planes for icons.
             /// Horizontal hotspot for cursors.
             /// </summary>
-            internal UInt16 wPlanes;
+            public UInt16 wPlanes;
             /// <summary>
             /// Bits per pixel for icons.
             /// Vertical hostpot for cursors.
             /// </summary>
-            internal UInt16 wBitsPerPixel;
+            public UInt16 wBitsPerPixel;
             /// <summary>
             /// Image size in bytes.
             /// </summary>
-            internal UInt32 dwImageSize;
+            public UInt32 dwImageSize;
             /// <summary>
             /// Offset of bitmap data from the beginning of the file.
             /// </summary>
-            internal UInt32 dwFileOffset;
+            public UInt32 dwFileOffset;
         }
 
         /// <summary>
         /// Hardware-independent icon structure in an .ico file.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        internal struct FILEGRPICONDIR
+        public struct FILEGRPICONDIR
         {
             /// <summary>
             /// Reserved, must be zero.
             /// </summary>
-            internal UInt16 wReserved;
+            public UInt16 wReserved;
             /// <summary>
             /// Resource Type (1 for icons).
             /// </summary>
-            internal UInt16 wType;
+            public UInt16 wType;
             /// <summary>
             /// Number of images.
             /// </summary>
-            internal UInt16 wCount;
+            public UInt16 wCount;
         }
 
         /// <summary>
@@ -177,7 +305,7 @@ namespace Vestris.ResourceLib
         /// <param name="hFile">This parameter is reserved for future use.</param>
         /// <param name="dwFlags">The action to be taken when loading the module.</param>
         /// <returns></returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, EntryPoint = "LoadLibraryExW")]
         internal static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hFile, uint dwFlags);
 
         /// <summary>
@@ -191,7 +319,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Predefined resource types.
         /// </summary>
-        internal enum ResourceTypes
+        public enum ResourceTypes
         {
             /// <summary>
             /// Hardware-dependent cursor resource.
@@ -425,19 +553,69 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Neutral primary language ID.
         /// </summary>
-        internal const UInt16 LANG_NEUTRAL = 0;
+        public const UInt16 LANG_NEUTRAL = 0;
         /// <summary>
         /// US-English primary language ID.
         /// </summary>
-        internal const UInt16 LANG_ENGLISH = 9;
+        public const UInt16 LANG_ENGLISH = 9;
 
         /// <summary>
         /// Neutral sublanguage ID.
         /// </summary>
-        internal const UInt16 SUBLANG_NEUTRAL = 0;
+        public const UInt16 SUBLANG_NEUTRAL = 0;
         /// <summary>
         /// US-English sublanguage ID.
         /// </summary>
-        internal const UInt16 SUBLANG_ENGLISH_US = 1;
+        public const UInt16 SUBLANG_ENGLISH_US = 1;
+
+        /// <summary>
+        /// CREATEPROCESS_MANIFEST_RESOURCE_ID is used primarily for EXEs. If an executable has a resource of type RT_MANIFEST, 
+        /// ID CREATEPROCESS_MANIFEST_RESOURCE_ID, Windows will create a process default activation context for the process. 
+        /// The process default activation context will be used by all components running in the process. 
+        /// CREATEPROCESS_MANIFEST_RESOURCE_ID can also used by DLLs. When Windows probe for dependencies, if the dll has 
+        /// a resource of type RT_MANIFEST, ID CREATEPROCESS_MANIFEST_RESOURCE_ID, Windows will use that manifest as the 
+        /// dependency. 
+        /// </summary>
+        public const UInt16 CREATEPROCESS_MANIFEST_RESOURCE_ID  = 1;
+        /// <summary>
+        /// ISOLATIONAWARE_MANIFEST_RESOURCE_ID is used primarily for DLLs. It should be used if the dll wants private 
+        /// dependencies other than the process default. For example, if an dll depends on comctl32.dll version 6.0.0.0. 
+        /// It should have a resource of type RT_MANIFEST, ID ISOLATIONAWARE_MANIFEST_RESOURCE_ID to depend on comctl32.dll 
+        /// version 6.0.0.0, so that even if the process executable wants comctl32.dll version 5.1, the dll itself will still 
+        /// use the right version of comctl32.dll. 
+        /// </summary>
+        public const UInt16 ISOLATIONAWARE_MANIFEST_RESOURCE_ID = 2;
+        /// <summary>
+        /// When ISOLATION_AWARE_ENABLED is defined, Windows re-defines certain APIs. For example LoadLibraryExW 
+        /// is redefined to IsolationAwareLoadLibraryExW. 
+        /// </summary>
+        public const UInt16 ISOLATIONAWARE_NOSTATICIMPORT_MANIFEST_RESOURCE_ID = 3;
+        /// <summary>
+        /// Resource manifest type.
+        /// </summary>
+        public enum ManifestType
+        {
+            /// <summary>
+            /// CREATEPROCESS_MANIFEST_RESOURCE_ID
+            /// </summary>
+            CreateProcess = CREATEPROCESS_MANIFEST_RESOURCE_ID,
+            /// <summary>
+            /// ISOLATIONAWARE_MANIFEST_RESOURCE_ID
+            /// </summary>
+            IsolationAware = ISOLATIONAWARE_MANIFEST_RESOURCE_ID,
+            /// <summary>
+            /// ISOLATIONAWARE_NOSTATICIMPORT_MANIFEST_RESOURCE_ID
+            /// </summary>
+            IsolationAwareNonstaticImport = ISOLATIONAWARE_NOSTATICIMPORT_MANIFEST_RESOURCE_ID
+        }
+
+        /// <summary>
+        /// Copies the contents of a source memory block to a destination memory block, and supports overlapping source and destination memory blocks.
+        /// </summary>
+        /// <param name="dest">A pointer to the starting address of the copied block's destination.</param>
+        /// <param name="src">A pointer to the starting address of the block of memory to copy.</param>
+        /// <param name="count">The size of the block of memory to copy, in bytes.</param>
+        [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+        internal static extern void MoveMemory(IntPtr dest, IntPtr src, uint count);
     }
 }

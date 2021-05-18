@@ -10,16 +10,16 @@ namespace Vestris.ResourceLib
     /// <summary>
     /// This structure depicts the organization of data in a hardware-independent icon resource.
     /// </summary>
-    internal class DirectoryResource<ImageResourceType> : Resource
+    public class DirectoryResource<ImageResourceType> : Resource
         where ImageResourceType : IconImageResource, new()
     {
-        internal Kernel32.GRPICONDIR _header = new Kernel32.GRPICONDIR();
+        Kernel32.GRPICONDIR _header = new Kernel32.GRPICONDIR();
         List<ImageResourceType> _icons = new List<ImageResourceType>();
 
         /// <summary>
         /// Returns the type of the resource in this group.
         /// </summary>
-        internal Kernel32.ResourceTypes ResourceType
+        public Kernel32.ResourceTypes ResourceType
         {
             get
             {
@@ -38,7 +38,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Icons contained in this hardware-independent icon resource.
         /// </summary>
-        internal List<ImageResourceType> Icons
+        public List<ImageResourceType> Icons
         {
             get
             {
@@ -68,7 +68,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// A new hardware-independent icon resource.
         /// </summary>
-        internal DirectoryResource(Kernel32.ResourceTypes resourceType)
+        public DirectoryResource(Kernel32.ResourceTypes resourceType)
             : base(IntPtr.Zero,
                 IntPtr.Zero,
                 new ResourceId(resourceType),
@@ -93,7 +93,7 @@ namespace Vestris.ResourceLib
         /// Save a hardware-independent icon resource to an executable file.
         /// </summary>
         /// <param name="filename">Name of an executable file (.exe or .dll).</param>
-        internal override void SaveTo(string filename)
+        public override void SaveTo(string filename)
         {
             base.SaveTo(filename);
 
@@ -116,7 +116,7 @@ namespace Vestris.ResourceLib
             _header = (Kernel32.GRPICONDIR)Marshal.PtrToStructure(
                 lpRes, typeof(Kernel32.GRPICONDIR));
 
-            IntPtr pEntry = new IntPtr(lpRes.ToInt32() + Marshal.SizeOf(_header));
+            IntPtr pEntry = new IntPtr(lpRes.ToInt64() + Marshal.SizeOf(_header));
 
             for (UInt16 i = 0; i < _header.wImageCount; i++)
             {

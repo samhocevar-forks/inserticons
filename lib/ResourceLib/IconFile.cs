@@ -10,12 +10,12 @@ namespace Vestris.ResourceLib
     /// <summary>
     /// This structure depicts the organization of data in a .ico file.
     /// </summary>
-    internal class IconFile
+    public class IconFile
     {
         /// <summary>
         /// Resource type.
         /// </summary>
-        internal enum GroupType
+        public enum GroupType
         {
             /// <summary>
             /// Icon.
@@ -33,7 +33,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Type of the group icon resource.
         /// </summary>
-        internal GroupType Type
+        public GroupType Type
         {
             get
             {
@@ -48,7 +48,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Collection of icons in an .ico file.
         /// </summary>
-        internal List<IconFileIcon> Icons
+        public List<IconFileIcon> Icons
         {
             get
             {
@@ -64,7 +64,7 @@ namespace Vestris.ResourceLib
         /// An existing .ico file.
         /// </summary>
         /// <param name="filename">An existing icon (.ico) file.</param>
-        internal IconFile(string filename)
+        public IconFile(string filename)
         {
             LoadFrom(filename);
         }
@@ -73,7 +73,7 @@ namespace Vestris.ResourceLib
         /// Load from a .ico file.
         /// </summary>
         /// <param name="filename">An existing icon (.ico) file.</param>
-        internal void LoadFrom(string filename)
+        public void LoadFrom(string filename)
         {
             byte[] data = File.ReadAllBytes(filename);
 
@@ -101,7 +101,7 @@ namespace Vestris.ResourceLib
             _header = (Kernel32.FILEGRPICONDIR)Marshal.PtrToStructure(
                 lpData, typeof(Kernel32.FILEGRPICONDIR));
 
-            IntPtr lpEntry = new IntPtr(lpData.ToInt32() + Marshal.SizeOf(_header));
+            IntPtr lpEntry = new IntPtr(lpData.ToInt64() + Marshal.SizeOf(_header));
 
             for (int i = 0; i < _header.wCount; i++)
             {

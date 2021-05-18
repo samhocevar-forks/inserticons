@@ -41,35 +41,69 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="lib\Mono.Security\Cryptography\CryptoConvert.cs" />
     <Compile Include="lib\Mono.Security\StrongName.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="lib\ResourceLib\DeviceIndependentBitmap.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="lib\ResourceLib\Accelerator.cs" />
+    <Compile Include="lib\ResourceLib\AcceleratorResource.cs" />
+    <Compile Include="lib\ResourceLib\Aligned.cs" />
+    <Compile Include="lib\ResourceLib\BitmapFile.cs" />
+    <Compile Include="lib\ResourceLib\BitmapResource.cs" />
+    <Compile Include="lib\ResourceLib\CursorDirectoryResource.cs" />
+    <Compile Include="lib\ResourceLib\CursorResource.cs" />
+    <Compile Include="lib\ResourceLib\DeviceIndependentBitmap.cs" />
+    <Compile Include="lib\ResourceLib\DialogExTemplate.cs" />
+    <Compile Include="lib\ResourceLib\DialogExTemplateControl.cs" />
+    <Compile Include="lib\ResourceLib\DialogResource.cs" />
+    <Compile Include="lib\ResourceLib\DialogTemplate.cs" />
+    <Compile Include="lib\ResourceLib\DialogTemplateBase.cs" />
+    <Compile Include="lib\ResourceLib\DialogTemplateControl.cs" />
+    <Compile Include="lib\ResourceLib\DialogTemplateControlBase.cs" />
+    <Compile Include="lib\ResourceLib\DialogTemplateUtil.cs" />
     <Compile Include="lib\ResourceLib\DirectoryResource.cs" />
-    <Compile Include="lib\ResourceLib\Gdi32.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="lib\ResourceLib\FixedFileInfo.cs" />
+    <Compile Include="lib\ResourceLib\FontDirectoryEntry.cs" />
+    <Compile Include="lib\ResourceLib\FontDirectoryResource.cs" />
+    <Compile Include="lib\ResourceLib\FontResource.cs" />
+    <Compile Include="lib\ResourceLib\Gdi32.cs" />
+    <Compile Include="lib\ResourceLib\GenericResource.cs" />
     <Compile Include="lib\ResourceLib\IconDirectoryResource.cs" />
     <Compile Include="lib\ResourceLib\IconFile.cs" />
-    <Compile Include="lib\ResourceLib\IconFileIcon.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="lib\ResourceLib\IconFileIcon.cs" />
     <Compile Include="lib\ResourceLib\IconImageResource.cs" />
-    <Compile Include="lib\ResourceLib\IconResource.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="lib\ResourceLib\IconResource.cs" />
     <Compile Include="lib\ResourceLib\Kernel32.cs" />
+    <Compile Include="lib\ResourceLib\LoadException.cs" />
+    <Compile Include="lib\ResourceLib\ManifestResource.cs" />
+    <Compile Include="lib\ResourceLib\MenuExTemplate.cs" />
+    <Compile Include="lib\ResourceLib\MenuExTemplateItem.cs" />
+    <Compile Include="lib\ResourceLib\MenuExTemplateItemCollection.cs" />
+    <Compile Include="lib\ResourceLib\MenuExTemplateItemCommand.cs" />
+    <Compile Include="lib\ResourceLib\MenuExTemplateItemPopup.cs" />
+    <Compile Include="lib\ResourceLib\MenuResource.cs" />
+    <Compile Include="lib\ResourceLib\MenuTemplate.cs" />
+    <Compile Include="lib\ResourceLib\MenuTemplateBase.cs" />
+    <Compile Include="lib\ResourceLib\MenuTemplateItem.cs" />
+    <Compile Include="lib\ResourceLib\MenuTemplateItemCollection.cs" />
+    <Compile Include="lib\ResourceLib\MenuTemplateItemCommand.cs" />
+    <Compile Include="lib\ResourceLib\MenuTemplateItemPopup.cs" />
     <Compile Include="lib\ResourceLib\Resource.cs" />
     <Compile Include="lib\ResourceLib\ResourceId.cs" />
     <Compile Include="lib\ResourceLib\ResourceInfo.cs" />
-    <Compile Include="lib\ResourceLib\ResourceUtil.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="lib\ResourceLib\ResourceTableHeader.cs" />
+    <Compile Include="lib\ResourceLib\ResourceUtil.cs" />
+    <Compile Include="lib\ResourceLib\StringFileInfo.cs" />
+    <Compile Include="lib\ResourceLib\StringResource.cs" />
+    <Compile Include="lib\ResourceLib\StringTable.cs" />
+    <Compile Include="lib\ResourceLib\StringTableEntry.cs" />
     <Compile Include="lib\ResourceLib\User32.cs" />
+    <Compile Include="lib\ResourceLib\VarFileInfo.cs" />
+    <Compile Include="lib\ResourceLib\VarTable.cs" />
+    <Compile Include="lib\ResourceLib\VersionResource.cs" />
+    <Compile Include="lib\ResourceLib\Winver.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\ResourceLib\License.txt" />

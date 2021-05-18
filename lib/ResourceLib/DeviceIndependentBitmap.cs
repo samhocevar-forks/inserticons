@@ -9,9 +9,12 @@ using System.IO;
 namespace Vestris.ResourceLib
 {
     /// <summary>
-    /// A device-independent image.
+    /// A device-independent image consists of a BITMAPINFOHEADER where
+    /// bmWidth is the width of the image andbmHeight is double the height 
+    /// of the image, followed by the bitmap color table, followed by the image
+    /// pixels, followed by the mask pixels.
     /// </summary>
-    internal class DeviceIndependentBitmap
+    public class DeviceIndependentBitmap
     {
         private Gdi32.BITMAPINFOHEADER _header = new Gdi32.BITMAPINFOHEADER();
         private byte[] _data = null;
@@ -22,7 +25,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Raw image data.
         /// </summary>
-        internal byte[] Data
+        public byte[] Data
         {
             get
             {
@@ -49,7 +52,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Bitmap info header.
         /// </summary>
-        internal Gdi32.BITMAPINFOHEADER Header
+        public Gdi32.BITMAPINFOHEADER Header
         {
             get
             {
@@ -60,7 +63,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Bitmap size in bytes.
         /// </summary>
-        internal int Size
+        public int Size
         {
             get
             {
@@ -71,7 +74,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// A new icon image.
         /// </summary>
-        internal DeviceIndependentBitmap()
+        public DeviceIndependentBitmap()
         {
 
         }
@@ -80,7 +83,7 @@ namespace Vestris.ResourceLib
         /// A device-independent bitmap.
         /// </summary>
         /// <param name="data">Bitmap data.</param>
-        internal DeviceIndependentBitmap(byte[] data)
+        public DeviceIndependentBitmap(byte[] data)
         {
             Data = data;
         }
@@ -89,7 +92,7 @@ namespace Vestris.ResourceLib
         /// Create a copy of an image.
         /// </summary>
         /// <param name="image">Source image.</param>
-        internal DeviceIndependentBitmap(DeviceIndependentBitmap image)
+        public DeviceIndependentBitmap(DeviceIndependentBitmap image)
         {
             _data = new byte[image._data.Length];
             Buffer.BlockCopy(image._data, 0, _data, 0, image._data.Length);
@@ -180,7 +183,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Bitmap monochrome mask.
         /// </summary>
-        internal Bitmap Mask
+        public Bitmap Mask
         {
             get
             {
@@ -254,7 +257,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Bitmap color (XOR) part of the image.
         /// </summary>
-        internal Bitmap Color
+        public Bitmap Color
         {
             get
             {
@@ -320,7 +323,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Complete image.
         /// </summary>
-        internal Bitmap Image
+        public Bitmap Image
         {
             get
             {
@@ -340,7 +343,6 @@ namespace Vestris.ResourceLib
                         // Image
                         Gdi32.BITMAPINFO bitmapInfo = new Gdi32.BITMAPINFO();
                         bitmapInfo.bmiHeader = _header;
-                        bitmapInfo.bmiHeader.biHeight /= 2;
                         // bitmapInfo.bmiColors = Tools.StandarizePalette(mEncoder.Colors);
                         hDCScreenOUTBmp = Gdi32.CreateCompatibleDC(hDCScreen);
                         hBitmapOUTBmp = Gdi32.CreateDIBSection(hDCScreenOUTBmp, ref bitmapInfo, 0, out bits, IntPtr.Zero, 0);

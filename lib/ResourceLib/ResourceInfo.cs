@@ -10,8 +10,9 @@ namespace Vestris.ResourceLib
     /// <summary>
     /// Resource info manager.
     /// </summary>
-    internal class ResourceInfo : IEnumerable<Resource>, IDisposable
+    public class ResourceInfo : IEnumerable<Resource>, IDisposable
     {
+        private Exception _innerException = null;
         private IntPtr _hModule = IntPtr.Zero;
         private Dictionary<ResourceId, List<Resource>> _resources;
         private List<ResourceId> _resourceTypes = null;
@@ -19,7 +20,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// A dictionary of resources, the key is the resource type, eg. "REGISTRY" or "16" (version).
         /// </summary>
-        internal Dictionary<ResourceId, List<Resource>> Resources
+        public Dictionary<ResourceId, List<Resource>> Resources
         {
             get
             {
@@ -30,7 +31,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// A shortcut for available resource types.
         /// </summary>
-        internal List<ResourceId> ResourceTypes
+        public List<ResourceId> ResourceTypes
         {
             get
             {
@@ -41,7 +42,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// A new resource info.
         /// </summary>
-        internal ResourceInfo()
+        public ResourceInfo()
         {
 
         }
@@ -49,20 +50,22 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Unload the previously loaded module.
         /// </summary>
-        internal void Unload()
+        public void Unload()
         {
             if (_hModule != IntPtr.Zero)
             {
                 Kernel32.FreeLibrary(_hModule);
                 _hModule = IntPtr.Zero;
             }
+
+            _innerException = null;
         }
 
         /// <summary>
         /// Load an executable or a DLL and read its resources.
         /// </summary>
         /// <param name="filename">Source filename.</param>
-        internal void Load(string filename)
+        public void Load(string filename)
         {
             Unload();
 
@@ -76,12 +79,20 @@ namespace Vestris.ResourceLib
             if (IntPtr.Zero == _hModule)
                 throw new Win32Exception(Marshal.GetLastWin32Error());
 
-            // enumerate resource types
-            // for each type, enumerate resource names
-            // for each name, enumerate resource languages
-            // for each resource language, enumerate actual resources
-            if (!Kernel32.EnumResourceTypes(_hModule, EnumResourceTypesImpl, IntPtr.Zero))
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+            try
+            {
+                // enumerate resource types
+                // for each type, enumerate resource names
+                // for each name, enumerate resource languages
+                // for each resource language, enumerate actual resources
+                if (!Kernel32.EnumResourceTypes(_hModule, EnumResourceTypesImpl, IntPtr.Zero))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
+            catch (Exception ex)
+            {
+                throw new LoadException(string.Format("Error loading '{0}'.", filename),
+                    _innerException, ex);
+            }
         }
 
         /// <summary>
@@ -141,12 +152,16 @@ namespace Vestris.ResourceLib
             {
                 switch (type.ResourceType)
                 {
+                    case Kernel32.ResourceTypes.RT_VERSION:
+                        return new VersionResource(hModule, hResourceGlobal, type, name, wIDLanguage, size);
                     case Kernel32.ResourceTypes.RT_GROUP_ICON:
                         return new IconDirectoryResource(hModule, hResourceGlobal, type, name, wIDLanguage, size);
+                    case Kernel32.ResourceTypes.RT_MANIFEST:
+                        return new ManifestResource(hModule, hResourceGlobal, type, name, wIDLanguage, size);
                 }
             }
 
-            return null;
+            throw new Exception("Not Supported");
         }
 
         /// <summary>
@@ -172,7 +187,20 @@ namespace Vestris.ResourceLib
             IntPtr hResource = Kernel32.FindResourceEx(hModule, lpszType, lpszName, wIDLanguage);
             IntPtr hResourceGlobal = Kernel32.LoadResource(hModule, hResource);
             int size = Kernel32.SizeofResource(hModule, hResource);
-            resources.Add(CreateResource(hModule, hResourceGlobal, type, name, wIDLanguage, size));
+            using (var aligned = new Aligned(hResourceGlobal, size))
+            {
+                try
+                {                    
+                    resources.Add(CreateResource(hModule, aligned.Ptr, type, name, wIDLanguage, size));
+                }
+                catch (Exception ex)
+                {
+                    _innerException = new Exception(string.Format("Error loading resource '{0}' {1} ({2}).",
+                        name, type.TypeName, wIDLanguage), ex);
+                    throw ex;
+                }
+            }
+            
             return true;
         }
 
@@ -180,7 +208,7 @@ namespace Vestris.ResourceLib
         /// Save resource to a file.
         /// </summary>
         /// <param name="filename">Target filename.</param>
-        internal void Save(string filename)
+        public void Save(string filename)
         {
             throw new NotImplementedException();
         }
@@ -198,7 +226,7 @@ namespace Vestris.ResourceLib
         /// </summary>
         /// <param name="type">Resource type.</param>
         /// <returns>A collection of resources of a given type.</returns>
-        internal List<Resource> this[Kernel32.ResourceTypes type]
+        public List<Resource> this[Kernel32.ResourceTypes type]
         {
             get
             {
@@ -215,7 +243,7 @@ namespace Vestris.ResourceLib
         /// </summary>
         /// <param name="type">Resource type.</param>
         /// <returns>A collection of resources of a given type.</returns>
-        internal List<Resource> this[string type]
+        public List<Resource> this[string type]
         {
             get
             {

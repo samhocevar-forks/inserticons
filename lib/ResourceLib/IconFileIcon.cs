@@ -11,7 +11,7 @@ namespace Vestris.ResourceLib
     /// <summary>
     /// This structure depicts the organization of icon data in a .ico file.
     /// </summary>
-    internal class IconFileIcon 
+    public class IconFileIcon 
     {
         private Kernel32.FILEGRPICONDIRENTRY _header;
         private DeviceIndependentBitmap _image = new DeviceIndependentBitmap();
@@ -19,7 +19,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Icon header.
         /// </summary>
-        internal Kernel32.FILEGRPICONDIRENTRY Header
+        public Kernel32.FILEGRPICONDIRENTRY Header
         {
             get
             {
@@ -30,7 +30,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Icon bitmap.
         /// </summary>
-        internal DeviceIndependentBitmap Image
+        public DeviceIndependentBitmap Image
         {
             get
             {
@@ -45,14 +45,15 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// New icon data.
         /// </summary>
-        internal IconFileIcon()
+        public IconFileIcon()
         {
 
         }
+
         /// <summary>
         /// Icon width.
         /// </summary>
-        internal Byte Width
+        public Byte Width
         {
             get
             {
@@ -63,7 +64,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Icon height.
         /// </summary>
-        internal Byte Height
+        public Byte Height
         {
             get
             {
@@ -74,7 +75,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Image size in bytes.
         /// </summary>
-        internal UInt32 ImageSize
+        public UInt32 ImageSize
         {
             get
             {
@@ -93,12 +94,11 @@ namespace Vestris.ResourceLib
             _header = (Kernel32.FILEGRPICONDIRENTRY)Marshal.PtrToStructure(
                 lpData, typeof(Kernel32.FILEGRPICONDIRENTRY));
 
-            IntPtr lpImage = new IntPtr(lpAllData.ToInt32() + _header.dwFileOffset);
+            IntPtr lpImage = new IntPtr(lpAllData.ToInt64() + _header.dwFileOffset);
             _image.Read(lpImage, _header.dwImageSize);
 
-            return new IntPtr(lpData.ToInt32() + Marshal.SizeOf(_header));
+            return new IntPtr(lpData.ToInt64() + Marshal.SizeOf(_header));
         }
-
 
         /// <summary>
         /// Icon size as a string.

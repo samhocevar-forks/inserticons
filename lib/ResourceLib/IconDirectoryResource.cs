@@ -10,8 +10,24 @@ namespace Vestris.ResourceLib
     /// <summary>
     /// This structure depicts the organization of data in a hardware-independent icon resource.
     /// </summary>
-    internal class IconDirectoryResource : DirectoryResource<IconResource>
+    public class IconDirectoryResource : DirectoryResource<IconResource>
     {
+        /// <summary>
+        /// Set Language ID
+        /// </summary>
+        public override ushort Language
+        {
+            get => base.Language;
+            set
+            {
+                base.Language = value;
+                foreach (var icon in Icons)
+                {
+                    icon.Language = value;
+                }
+            }
+        }
+
         /// <summary>
         /// A hardware-independent icon resource.
         /// </summary>
@@ -39,13 +55,12 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// A new collection of icons that can be embedded into an executable file.
         /// </summary>
-        internal IconDirectoryResource(IconFile iconFile)
+        public IconDirectoryResource(IconFile iconFile)
             : base(Kernel32.ResourceTypes.RT_GROUP_ICON)
         {            
-            for (UInt16 id = 0; id < iconFile.Icons.Count; id++)
+            for (var id = 0; id < iconFile.Icons.Count; id++)
             {
-                IconResource iconResource = new IconResource(
-                    iconFile.Icons[id], new ResourceId(id), _language);
+                IconResource iconResource = new IconResource(iconFile.Icons[id], new ResourceId((uint)id + 1), _language);
                 Icons.Add(iconResource);
             }
         }

@@ -10,7 +10,7 @@ namespace Vestris.ResourceLib
     /// <summary>
     /// A version resource.
     /// </summary>
-    internal abstract class Resource
+    public abstract class Resource
     {
         /// <summary>
         /// Resource type.
@@ -40,7 +40,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Version resource size in bytes.
         /// </summary>
-        internal int Size
+        public int Size
         {
             get
             {
@@ -51,7 +51,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Language ID.
         /// </summary>
-        internal UInt16 Language
+        public virtual UInt16 Language
         {
             get
             {
@@ -66,7 +66,7 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// Resource type.
         /// </summary>
-        internal ResourceId Type
+        public ResourceId Type
         {
             get
             {
@@ -77,20 +77,18 @@ namespace Vestris.ResourceLib
         /// <summary>
         /// String representation of the resource type.
         /// </summary>
-        internal string TypeName
+        public string TypeName
         {
             get
             {
-                return _type.IsIntResource()
-                    ? _type.ResourceType.ToString()
-                    : _type.Name;
+                return _type.TypeName;
             }
         }
 
         /// <summary>
         /// Resource name.
         /// </summary>
-        internal ResourceId Name
+        public ResourceId Name
         {
             get
             {
@@ -146,14 +144,15 @@ namespace Vestris.ResourceLib
             if (lpRes == IntPtr.Zero)
                 throw new Win32Exception(Marshal.GetLastWin32Error());
 
-            Read(hModule, lpRes);
+            using (var aligned = new Aligned(lpRes, _size))
+                Read(hModule, aligned.Ptr);
         }
 
         /// <summary>
         /// Load a resource from an executable (.exe or .dll) file.
         /// </summary>
         /// <param name="filename">An executable (.exe or .dll) file.</param>
-        internal virtual void LoadFrom(string filename)
+        public virtual void LoadFrom(string filename)
         {
             LoadFrom(filename, _type, _name, _language);
         }
@@ -212,11 +211,14 @@ namespace Vestris.ResourceLib
             if (_size <= 0)
                 throw new Win32Exception(Marshal.GetLastWin32Error());
 
-            _type = type;
-            _name = name;
-            _language = lang;
+            using (var aligned = new Aligned(lpRes, _size))
+            {
+                _type = type;
+                _name = name;
+                _language = lang;
 
-            Read(hModule, lpRes);
+                Read(hModule, aligned.Ptr);
+            }
         }
 
         /// <summary>
@@ -237,7 +239,7 @@ namespace Vestris.ResourceLib
         /// Return resource data.
         /// </summary>
         /// <returns>Resource data.</returns>
-        internal byte[] WriteAndGetBytes()
+        public byte[] WriteAndGetBytes()
         {
             MemoryStream ms = new MemoryStream();
             BinaryWriter w = new BinaryWriter(ms, Encoding.Default);
@@ -250,7 +252,7 @@ namespace Vestris.ResourceLib
         /// Save a resource.
         /// </summary>
         /// <param name="filename">Name of an executable file (.exe or .dll).</param>
-        internal virtual void SaveTo(string filename)
+        public virtual void SaveTo(string filename)
         {
             SaveTo(filename, _type, _name, _language);
         }
@@ -272,7 +274,7 @@ namespace Vestris.ResourceLib
         /// Delete a resource from an executable (.exe or .dll) file.
         /// </summary>
         /// <param name="filename">Path to an executable file.</param>
-        internal virtual void DeleteFrom(string filename)
+        public virtual void DeleteFrom(string filename)
         {
             Delete(filename, _type, _name, _language);
         }
@@ -304,10 +306,74 @@ namespace Vestris.ResourceLib
             if (h == IntPtr.Zero)
                 throw new Win32Exception(Marshal.GetLastWin32Error());
 
-            if (!Kernel32.UpdateResource(h, type.Id, name.Id,
-                lang, data, (data == null ? 0 : (uint)data.Length)))
+            try
             {
+                if (data != null && data.Length == 0)
+                {
+                    data = null;
+                }
+                if (!Kernel32.UpdateResource(h, type.Id, name.Id,
+                    lang, data, (data == null ? 0 : (uint)data.Length)))
+                {
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                }
+            }
+            catch
+            {
+                Kernel32.EndUpdateResource(h, true);
+                throw;
+            }
+
+            if (!Kernel32.EndUpdateResource(h, false))
                 throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
+
+
+        /// <summary>
+        /// Save a batch of resources to a given file.
+        /// </summary>
+        /// <param name="filename">Path to an executable file.</param>
+        /// <param name="resources">The resources to write.</param>
+        public static void Save(string filename, IEnumerable<Resource> resources)
+        {
+            IntPtr h = Kernel32.BeginUpdateResource(filename, false);
+
+            if (h == IntPtr.Zero)
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+
+            try
+            {
+                foreach (var resource in resources)
+                {
+                    var imageResource = resource as IconImageResource;
+                    if (imageResource != null)
+                    {
+                        var bytes = imageResource.Image == null ? null : imageResource.Image.Data;
+                        if (!Kernel32.UpdateResource(h, imageResource.Type.Id, new IntPtr(imageResource.Id),
+                            imageResource.Language, bytes, (bytes == null ? 0 : (uint)bytes.Length)))
+                        {
+                            throw new Win32Exception(Marshal.GetLastWin32Error());
+                        }
+                    }
+                    else
+                    {
+                        var bytes = resource.WriteAndGetBytes();
+                        if (bytes != null && bytes.Length == 0)
+                        {
+                            bytes = null;
+                        }
+                        if (!Kernel32.UpdateResource(h, resource.Type.Id, resource.Name.Id,
+                            resource.Language, bytes, (bytes == null ? 0 : (uint)bytes.Length)))
+                        {
+                            throw new Win32Exception(Marshal.GetLastWin32Error());
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Kernel32.EndUpdateResource(h, true);
+                throw;
             }
 
             if (!Kernel32.EndUpdateResource(h, false))
