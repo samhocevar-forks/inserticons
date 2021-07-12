@@ -102,8 +102,9 @@ namespace InsertIcons
                     {
                         icon.Id = ++iconMaxId;
                     }
-                    Console.WriteLine(" {0} {1} inserted into {2}", newIcon.Name.Id, Path.GetFileName(icoFile), Path.GetFileName(assembly));
                     newIcon.SaveTo(assembly);
+                    Console.WriteLine(" {0} {1} inserted into {2}", newIcon.Name.Id, Path.GetFileName(icoFile), Path.GetFileName(assembly));
+                    
                 }
 
                 if (strongNameKeyFile != null)
@@ -115,7 +116,12 @@ namespace InsertIcons
             }
             catch (Exception ex)
             {
+#if DEBUG
+                Console.Error.WriteLine("error: {0}", ex.ToString());
+#else
                 Console.Error.WriteLine("error: {0}", ex.Message);
+#endif
+
                 return 1;
             }
 
