@@ -43,8 +43,8 @@ using Mono.Security;
 [assembly: AssemblyCopyright("Copyright © 2012 Einar Egilsson")]
 [assembly: ComVisible(false)]
 [assembly: Guid("56c67123-d4f9-4baf-910e-b4c8a1b7fd7d")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.1.0")]
+[assembly: AssemblyFileVersion("1.2.1.0")]
 
 
 namespace InsertIcons
