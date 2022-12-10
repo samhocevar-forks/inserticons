@@ -43,8 +43,8 @@ using Mono.Security;
 [assembly: AssemblyCopyright("Copyright © 2012 Einar Egilsson")]
 [assembly: ComVisible(false)]
 [assembly: Guid("56c67123-d4f9-4baf-910e-b4c8a1b7fd7d")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.1.0")]
+[assembly: AssemblyFileVersion("1.2.1.0")]
 
 
 namespace InsertIcons
@@ -102,8 +102,9 @@ namespace InsertIcons
                     {
                         icon.Id = ++iconMaxId;
                     }
-                    Console.WriteLine(" {0} {1} inserted into {2}", newIcon.Name.Id, Path.GetFileName(icoFile), Path.GetFileName(assembly));
                     newIcon.SaveTo(assembly);
+                    Console.WriteLine(" {0} {1} inserted into {2}", newIcon.Name.Id, Path.GetFileName(icoFile), Path.GetFileName(assembly));
+                    
                 }
 
                 if (strongNameKeyFile != null)
@@ -115,7 +116,12 @@ namespace InsertIcons
             }
             catch (Exception ex)
             {
+#if DEBUG
+                Console.Error.WriteLine("error: {0}", ex.ToString());
+#else
                 Console.Error.WriteLine("error: {0}", ex.Message);
+#endif
+
                 return 1;
             }
 
